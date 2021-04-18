@@ -16,5 +16,7 @@ def find_matches():
 
 if __name__ == "__main__":
     while True:
+        logger.info("Finding matches...")
+
         find_matches()
-        time.sleep(10)
+        time.sleep(1)

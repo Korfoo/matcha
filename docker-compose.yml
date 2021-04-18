@@ -1,0 +1,26 @@
+version: '3.7'
+services:
+  redis:
+    image: redislabs/redismod
+    ports:
+      - 6379:6379
+  api:
+    ports:
+      - '8000:8000'
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn app.main:app --host 0.0.0.0
+    environment:
+      PYTHONPATH: .
+    depends_on:
+      - "redis"
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      PYTHONPATH: .
+    command: python app/worker.py
+    depends_on:
+      - "redis"

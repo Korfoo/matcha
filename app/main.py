@@ -32,7 +32,7 @@ html = """
         var ws = null;
             function connect(event) {
                 var user = document.getElementById("id")
-                ws = new WebSocket("ws://localhost:8000/queue?user=" + user.value);
+                ws = new WebSocket("ws://0.0.0.0:8000/queue?user=" + user.value);
                 ws.onmessage = function(event) {
                     var messages = document.getElementById('messages')
                     var message = document.createElement('li')
@@ -69,7 +69,7 @@ async def queue(websocket):
 
 
 def startup():
-    print("Ready to go")
+    logger.info("Fueled up and ready to roll out!")
 
 routes = [
     Route("/", homepage),
