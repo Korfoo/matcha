@@ -14,7 +14,3 @@ async def put_user(user_id: str, user_rating: int):
 
     redis.close()
     await redis.wait_closed()
-
-
-def test_debug_log():
-    logger.debug("SOMETHINGSOMETHINGSOMETHING")

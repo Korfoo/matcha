@@ -1,7 +1,6 @@
 import logging
 
 from app.helpers.db import update_rating
-from app.helpers.matchmaking import test_debug_log
 
 from starlette.applications import Starlette
 from starlette.responses import HTMLResponse
@@ -65,7 +64,6 @@ async def queue(websocket):
     await websocket.accept()
     user_id = websocket.query_params["user"]
     logger.debug(f"User {user_id} to be put in queue.")
-    test_debug_log()
     await websocket.send_text(f"User {user_id} to be put in queue.")
     await websocket.close()
 
