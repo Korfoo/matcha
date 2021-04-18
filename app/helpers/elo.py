@@ -4,9 +4,7 @@ import math
 # Function to calculate the Probability
 def calculate_probability(rating_1: int, rating_2: int) -> float:
 
-    return (
-        1.0 * 1.0 / (1 + 1.0 * math.pow(10, 1.0 * (rating_1 - rating_2) / 400))
-    )
+    return 1.0 * 1.0 / (1 + 1.0 * math.pow(10, 1.0 * (rating_1 - rating_2) / 400))
 
 
 def calculate_new_rating(
