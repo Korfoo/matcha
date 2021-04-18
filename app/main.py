@@ -17,6 +17,7 @@ html = """
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
         <title>Matcha testing page</title>
     </head>
     <body>
