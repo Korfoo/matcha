@@ -60,7 +60,7 @@ def find_matches():
             opponent_elo = opponent[1]
 
             # Make sure the player's ELO is also in the opponent's ELO-range
-            if (opponent_elo - opponent_elo_range) <= player_elo <= (opponent_elo + opponent_elo_range):
+            if (opponent_elo - opponent_elo_range) <= player_elo <= (opponent_elo + opponent_elo_range) and player_id != opponent_id:
                 possible_opponent = {
                     "id": opponent_id,
                     "time_in_queue": opponent_time_in_queue,
