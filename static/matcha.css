@@ -1,5 +1,5 @@
 :root {
-    --accent: lightgreen
+    --accent: #99f5d2;
 }
 
 .row {
@@ -9,3 +9,15 @@
 .column {
 flex: 50%;
 }
+
+h1 {
+    color: #99f5d2;
+}
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+  }
