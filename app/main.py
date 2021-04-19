@@ -1,6 +1,7 @@
 import logging
 
-from app.helpers.db import update_rating, add_user, update_rating
+from app.helpers.db import update_rating, add_user, update_rating, get_user, update_games_played
+from app.helpers.elo import calculate_new_rating
 
 from starlette.applications import Starlette
 from starlette.responses import HTMLResponse
@@ -55,10 +56,16 @@ def homepage(request):
 
 async def game_finished(request):
     body = request.json()
-    winner = body["winner"]
-    loser = body["loser"]
+    winner = get_user(body["winner"])
+    loser = get_user(body["loser"])
 
-    update_rating(winner, loser)
+    new_ratings = calculate_new_rating(winner["rating"], loser["rating"], 30, 0)
+
+    await update_rating(body["winner"], new_ratings[0])
+    await update_rating(body["loser"], new_ratings[1])
+    await update_games_played(body["winner"])
+    await update_games_played(body["loser"])
+
 
 
 async def queue(websocket):
@@ -66,7 +73,7 @@ async def queue(websocket):
     user_id = websocket.query_params["user"]
     logger.debug(f"User {user_id} to be put in queue.")
     user = await add_user(user_id, "rudolf")
-    logger.debug(user)
+    logger.debug(user["rating"])
     await update_rating(user_id, 9000)
     await websocket.send_text(f"User {user_id} to be put in queue.")
     await websocket.close()
