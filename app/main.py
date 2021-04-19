@@ -6,53 +6,13 @@ from app.helpers.elo import calculate_new_rating
 from starlette.applications import Starlette
 from starlette.responses import HTMLResponse
 from starlette.routing import Route, Mount, WebSocketRoute
+from starlette.staticfiles import StaticFiles
 
 logger = logging.getLogger("matcha")
 logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
 logger.addHandler(ch)
-
-
-html = """
-<!DOCTYPE html>
-<html>
-    <head>
-        <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
-        <title>Matcha testing page</title>
-    </head>
-    <body>
-        <h1>Matcha Test</h1>
-        <form action="" onsubmit="">
-            <label>id: <input type="text" id="id" autocomplete="off" value="some-key-token"/></label>
-            <button onclick="connect(event)">queue</button>
-            <hr>
-        </form>
-        <ul id='messages'>
-        </ul>
-        <script>
-        var ws = null;
-            function connect(event) {
-                var user = document.getElementById("id")
-                ws = new WebSocket("ws://0.0.0.0:8000/queue?user=" + user.value);
-                ws.onmessage = function(event) {
-                    var messages = document.getElementById('messages')
-                    var message = document.createElement('li')
-                    var content = document.createTextNode(event.data)
-                    message.appendChild(content)
-                    messages.appendChild(message)
-                };
-                event.preventDefault()
-            }
-        </script>
-    </body>
-</html>
-"""
-
-
-def homepage(request):
-    return HTMLResponse(html)
-
 
 async def game_finished(request):
     body = request.json()
@@ -96,9 +56,9 @@ def startup():
     logger.info("Fueled up and ready to roll out!")
 
 routes = [
-    Route("/", homepage),
     Route("/game", game_finished, methods=["POST"]),
     WebSocketRoute("/queue", queue),
+    Mount('/', app=StaticFiles(directory='static'), name="static"),
 ]
 
 app = Starlette(debug=True, routes=routes, on_startup=[startup])
