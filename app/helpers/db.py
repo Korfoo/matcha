@@ -16,9 +16,9 @@ async def update_games_played(user_id: str):
 async def add_user(user_id: str, username: str) -> dict:
     conn = await aioredis.create_connection("redis://redis", encoding="utf-8")
 
-    user = {"username": username, "rating": 800, "games_played": 0}
+    user = {"id": user_id, "username": username, "rating": 800, "games_played": 0}
     logger.debug(f"Adding {user} to database")
-    ok = await conn.execute("JSON.SET", user_id, ".", json.dumps(user))
+    await conn.execute("JSON.SET", user_id, ".", json.dumps(user))
 
     return user
 

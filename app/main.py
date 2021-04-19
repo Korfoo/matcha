@@ -69,13 +69,26 @@ async def game_finished(request):
 
 
 async def queue(websocket):
-    await websocket.accept()
+    # Get the id of the user from the query parameters
     user_id = websocket.query_params["user"]
-    logger.debug(f"User {user_id} to be put in queue.")
-    user = await add_user(user_id, "rudolf")
+    if not user_id:
+        await websocket.close(code=1008)
+
+    await websocket.accept()
+
+    # Add user to databaase as guest if not yet registered
+    user = await get_user(user_id)
+    if not user:
+        user = await add_user(user_id, "guest")
+
+    # Add user to the queue
+    match = await search_match(user)
+
+    # Return room  id to user when match is found
     logger.debug(user["rating"])
-    await update_rating(user_id, 9000)
-    await websocket.send_text(f"User {user_id} to be put in queue.")
+
+
+    await websocket.send_json(match)
     await websocket.close()
 
 
