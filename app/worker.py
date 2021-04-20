@@ -27,6 +27,10 @@ def find_matches():
 
         # Using the player ID we can retrieve it's ELO.
         player_elo = matchmaking_pool.zscore("matchmaking_pool", player_id)
+        
+        # When the player has stopped queueing it won't be present
+        if not player_elo:
+            continue
 
         # The time at which the player queued is the value in the table. 
         # Taking the difference between queue time and current time is the time the player has been in the queue.
@@ -51,6 +55,10 @@ def find_matches():
             opponent_queue_time = matchmaking_pool.zscore(
                 "matchmaking_time", opponent_id
             )
+
+            # When the player has stopped queueing it won't be present
+            if not opponent_queue_time:
+                continue
 
             opponent_time_in_queue = int(time.time()) - int(opponent_queue_time)
 
