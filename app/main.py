@@ -2,6 +2,7 @@ import logging
 
 from app.helpers.db import update_rating, add_user, update_rating, get_user, update_games_played
 from app.helpers.elo import calculate_new_rating
+from app.helpers.matchmaking import search_match
 
 from starlette.applications import Starlette
 from starlette.responses import HTMLResponse
@@ -36,18 +37,17 @@ async def queue(websocket):
 
     await websocket.accept()
 
-    # Add user to databaase as guest if not yet registered
     user = await get_user(user_id)
+
+    # Add user to databaase as guest if not yet registered
     if not user:
         user = await add_user(user_id, "guest")
 
+    logger.debug(f"Adding {user} to the queue.")
     # Add user to the queue
     match = await search_match(user)
 
     # Return room  id to user when match is found
-    logger.debug(user["rating"])
-
-
     await websocket.send_json(match)
     await websocket.close()
 
