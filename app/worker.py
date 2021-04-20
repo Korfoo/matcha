@@ -2,16 +2,30 @@ import json
 import logging
 import time
 import signal
+import secrets
 
 import redis
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("matcha_worker")
+logger.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+logger.addHandler(ch)
+
+# Redis /1 is used for matchmaking pool
+# Redis /2 is used to put matches found
 
 matchmaking_pool = redis.Redis(host="redis", port=6379, db=1)
+pub = redis.Redis(host="redis", port=6379, db=2)
 
 def publish_match(player_1_id, player_2_id, room_id):
-    pass
-
+    match = {
+        "player_1": player_1_id.decode("utf-8"),
+        "player_2": player_2_id.decode("utf-8"),
+        "room_id": room_id,
+    }
+    
+    pub.publish("matches", json.dumps(match))
 
 def find_matches():
     """
@@ -88,7 +102,7 @@ def find_matches():
             matchmaking_pool.zrem("matchmaking_pool", possible_opponents[0]["id"])
 
             # Return the opponent that has been queueing the longest
-            return possible_opponents[0]["id"]
+            publish_match(player_id, possible_opponents[0]["id"], secrets.token_hex(6))
 
 
 def terminate(signal,frame):
