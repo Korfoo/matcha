@@ -1,6 +1,7 @@
 import json
 import logging
 import time
+import signal
 
 import redis
 
