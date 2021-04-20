@@ -1,4 +1,5 @@
 import logging
+import time
 
 import aioredis
 
@@ -9,9 +10,9 @@ logger = logging.getLogger("matcha")
 
 
 async def _put_user(user_id: str, user_rating: int):
-    redis = await aioredis.create_redis("redis://0.0.0.0:6379/1")
+    redis = await aioredis.create_redis("redis://redis:6379/1")
 
-    await redis.zadd("matchmaking_pool", user_rating, user_id)
+    await redis.zadd("matchmaking_pool", int(user_rating), user_id)
     await redis.zadd("matchmaking_time", time.time(), user_id)
 
     redis.close()
@@ -20,7 +21,7 @@ async def _put_user(user_id: str, user_rating: int):
 
 
 async def _get_match(user_id: str):
-    redis = await aioredis.create_redis("redis://0.0.0.0:6379/2")
+    redis = await aioredis.create_redis("redis://redis:6379/2")
 
     # Subscribe to the matches table
     res = await redis.subscribe("matches")
@@ -41,10 +42,8 @@ async def _get_match(user_id: str):
 async def search_match(user: dict) -> dict:
     # Add user to the queue
     await _put_user(user["id"], user["rating"])
-    logger.debug(f"{user["username"]} added to the queue.")
 
     # Wait for match to be found
-    match = await _get_match()
-    logger.debug(f"Match found: {match}")
+    match = await _get_match(user["id"])
 
     return match
