@@ -16,24 +16,13 @@
         <p>Redis-based matchmaking for 1v1 games.</p>
     </header>
     <div class="row">
-        <div>
-            <form action="" onsubmit="">
-                <label>id: <input type="text" id="id" autocomplete="off" value="some-key-token" /></label>
-                <button onclick="connect(event)">queue</button>
-                <hr>
-            </form>
-            <ul id='messages'>
-            </ul>
+        <button class="big" onclick="connect(event)">Start simulation</button>
+        <hr class="big">
+        <div class="big" id="timer">
+
         </div>
-        <!-- <div class="column">
-            <form action="" onsubmit="">
-                <label>id: <input type="text" id="id" autocomplete="off" value="some-key-token" /></label>
-                <button onclick="connect(event)">queue</button>
-                <hr>
-            </form>
-            <ul id='messages'>
-            </ul>
-        </div> -->
+        <ul class="big" id='messages'>
+        </ul>
     </div>
     <footer>
         Copyright 2021 - Korfoo

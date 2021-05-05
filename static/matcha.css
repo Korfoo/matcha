@@ -4,10 +4,11 @@
 
 .row {
     display: flex;
+    flex-direction: column;
   }
   
-.column {
-flex: 50%;
+.big {
+  width: 100%;
 }
 
 h1 {
