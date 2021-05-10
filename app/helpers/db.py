@@ -36,4 +36,8 @@ async def get_user(user_id: str) -> dict:
     conn.close()
     await conn.wait_closed()
 
-    return user
+    if user:
+        return json.loads(user)
+    else:
+        return None
+

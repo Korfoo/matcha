@@ -5,7 +5,7 @@ from app.helpers.elo import calculate_new_rating
 from app.helpers.matchmaking import search_match
 
 from starlette.applications import Starlette
-from starlette.responses import HTMLResponse
+from starlette.responses import HTMLResponse, JSONResponse
 from starlette.routing import Route, Mount, WebSocketRoute
 from starlette.staticfiles import StaticFiles
 
@@ -16,9 +16,9 @@ ch.setLevel(logging.DEBUG)
 logger.addHandler(ch)
 
 async def game_finished(request):
-    body = request.json()
-    winner = get_user(body["winner"])
-    loser = get_user(body["loser"])
+    body = await request.json()
+    winner = await get_user(body["winner"])
+    loser = await get_user(body["loser"])
 
     new_ratings = calculate_new_rating(winner["rating"], loser["rating"], 30, 0)
 
@@ -27,7 +27,7 @@ async def game_finished(request):
     await update_games_played(body["winner"])
     await update_games_played(body["loser"])
 
-
+    return JSONResponse(new_ratings)
 
 async def queue(websocket):
     # Get the id of the user from the query parameters

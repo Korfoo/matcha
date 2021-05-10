@@ -12,20 +12,12 @@ function connect(event) {
     ws_b = new WebSocket("ws://0.0.0.0:8000/queue?user=" + player_b);
     addMessageToMessages(player_b + " has entered the queue.")
 
-    ws_a.onmessage = function (event) {
-        addMessageToMessages(event.data)
-        // var message = document.createElement('li')
-        // var content = document.createTextNode(event.data)
-        // message.appendChild(content)
-        // messages.appendChild(message)
-    };
     ws_b.onmessage = function (event) {
-        addMessageToMessages(event.data)
-        // var message = document.createElement('li')
-        // var content = document.createTextNode(event.data)
-        // message.appendChild(content)
-        // messages.appendChild(message)
         clearInterval(timer)
+
+        var jsonObject = JSON.parse(event.data)
+        addMessageToMessages(jsonObject.player_1 + " will be facing " + jsonObject.player_2 + " in room " + jsonObject.room_id + ".")
+        simulateMatch(jsonObject.player_1, jsonObject.player_2)
     };
     event.preventDefault()
 }
@@ -52,4 +44,22 @@ function incrementSeconds() {
 
     seconds += 1;
     el.innerText = "Time in queue: " + seconds + " seconds.";
+}
+
+function simulateMatch(player_1, player_2) {
+    addMessageToMessages(player_1 + " has won.")
+
+    var data = {
+        winner: player_1,
+        loser: player_2
+    };
+
+    var json = JSON.stringify(data);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "http://0.0.0.0:8000/game");
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(json);
+    addMessageToMessages(xhr.response)
+    
 }
