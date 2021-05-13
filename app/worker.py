@@ -3,7 +3,7 @@ import logging
 import time
 import signal
 import secrets
-
+import sys
 import redis
 
 logger = logging.getLogger("matcha_worker")
@@ -18,14 +18,16 @@ logger.addHandler(ch)
 matchmaking_pool = redis.Redis(host="redis", port=6379, db=1)
 pub = redis.Redis(host="redis", port=6379, db=2)
 
+
 def publish_match(player_1_id, player_2_id, room_id):
     match = {
         "player_1": player_1_id.decode("utf-8"),
         "player_2": player_2_id.decode("utf-8"),
         "room_id": room_id,
     }
-    
+
     pub.publish("matches", json.dumps(match))
+
 
 def find_matches():
     """
@@ -42,18 +44,20 @@ def find_matches():
 
         # Using the player ID we can retrieve it's ELO.
         player_elo = matchmaking_pool.zscore("matchmaking_pool", player_id)
-        
+
         # When the player has stopped queueing it won't be present
         if not player_elo:
             continue
 
-        # The time at which the player queued is the value in the table. 
+        # The time at which the player queued is the value in the table.
         # Taking the difference between queue time and current time is the time the player has been in the queue.
         player_queue_time = player[1]
         player_time_in_queue = int(time.time()) - int(player_queue_time)
 
         # TODO: remove magic numbers, extract to config
-        player_elo_range = min(50 * (1 + 25 / 100) ** int(player_time_in_queue / 10), 500)
+        player_elo_range = min(
+            50 * (1 + 25 / 100) ** int(player_time_in_queue / 10), 500
+        )
 
         # Search all other players whose ELO is within the calculated range
         possible_opponents = []
@@ -78,12 +82,16 @@ def find_matches():
             opponent_time_in_queue = int(time.time()) - int(opponent_queue_time)
 
             # TODO: remove magic numbers, extract to config
-            opponent_elo_range = min(50 * (1 + 25 / 100) ** int(opponent_time_in_queue / 10),500)
+            opponent_elo_range = min(
+                50 * (1 + 25 / 100) ** int(opponent_time_in_queue / 10), 500
+            )
 
             opponent_elo = opponent[1]
 
             # Make sure the player's ELO is also in the opponent's ELO-range
-            if (opponent_elo - opponent_elo_range) <= player_elo <= (opponent_elo + opponent_elo_range) and player_id != opponent_id:
+            if (opponent_elo - opponent_elo_range) <= player_elo <= (
+                opponent_elo + opponent_elo_range
+            ) and player_id != opponent_id:
                 possible_opponent = {
                     "id": opponent_id,
                     "time_in_queue": opponent_time_in_queue,
@@ -105,8 +113,9 @@ def find_matches():
             publish_match(player_id, possible_opponents[0]["id"], secrets.token_hex(6))
 
 
-def terminate(signal,frame):
-  sys.exit(0)
+def terminate(signal, frame):
+    sys.exit(0)
+
 
 if __name__ == "__main__":
     signal.signal(signal.SIGTERM, terminate)
@@ -116,4 +125,3 @@ if __name__ == "__main__":
 
         find_matches()
         time.sleep(10)
-
