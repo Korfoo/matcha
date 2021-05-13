@@ -3,9 +3,10 @@ import logging
 from app.helpers.db import update_rating, add_user, update_rating, get_user, update_games_played
 from app.helpers.elo import calculate_new_rating
 from app.helpers.matchmaking import search_match
+from app.helpers.config import config
 
 from starlette.applications import Starlette
-from starlette.responses import HTMLResponse, JSONResponse
+from starlette.responses import JSONResponse
 from starlette.routing import Route, Mount, WebSocketRoute
 from starlette.staticfiles import StaticFiles
 
@@ -58,7 +59,9 @@ def startup():
 routes = [
     Route("/game", game_finished, methods=["POST"]),
     WebSocketRoute("/queue", queue),
-    Mount('/', app=StaticFiles(directory='static'), name="static"),
 ]
+
+if config.environment == "debug":
+    routes.append(Mount('/', app=StaticFiles(directory='static'), name="static"))
 
 app = Starlette(debug=True, routes=routes, on_startup=[startup])
