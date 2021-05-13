@@ -48,4 +48,4 @@ Using the `MATCHA_ENVIRONMENT` you can enable/disable the testing page. When the
 
 ## Acknowledgements
 
-I would like to thank my cat.
+I would like to thank my cat and the team behind Starlette.
