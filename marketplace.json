@@ -11,7 +11,7 @@
     "language": [
         "Python"
     ],
-    "redis_commands": [],
+    "redis_commands": ["JSON.SET", "JSON.NUMINCRBY", "JSON.GET", "ZADD", "SUBSCRIBE", "UNSUBSCRIBE", "ZSCAN", "ZSCORE", "ZRANGEBYSCORE", "ZREM", "PUBLISH"],
     "redis_features": [],
     "redis_modules": [
         "RediJSON"
@@ -19,7 +19,7 @@
     "app_image_urls": [
         "https://github.com/Korfoo/matcha/raw/main/diagram.png"
     ],
-    "youtube_url": "",
+    "youtube_url": "https://youtu.be/D7EeBJId85M",
     "special_tags": [
         "Hackathon"
     ],
