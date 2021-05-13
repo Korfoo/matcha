@@ -1,0 +1,28 @@
+{
+    "app_name": "Matcha",
+    "description": "Redis-based matchmaking for 1v1 games.",
+    "hidden": false,
+    "rank": 20,
+    "type": "Full App",
+    "contributed_by": "Community",
+    "repo_url": "https://github.com/Korfoo/matcha",
+    "download_url": "https://github.com/Korfoo/matcha/archive/refs/heads/main.zip",
+    "hosted_url": "",
+    "language": [
+        "Python"
+    ],
+    "redis_commands": [],
+    "redis_features": [],
+    "redis_modules": [
+        "RediJSON"
+    ],
+    "app_image_urls": [
+        "https://github.com/Korfoo/matcha/raw/main/diagram.png"
+    ],
+    "youtube_url": "",
+    "special_tags": [
+        "Hackathon"
+    ],
+    "verticals": [],
+    "markdown": "https://raw.githubusercontent.com/Korfoo/matcha/main/README.md"
+}
